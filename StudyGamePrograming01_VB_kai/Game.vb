@@ -33,6 +33,7 @@ Public Class Game
     Public numBalls As Integer = 1
     Public mBall(numBalls) As Ball
     Public mBalls As New List(Of Ball)
+    Public scene As Integer
 
     'コンストラクタ
     Public Sub Game_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -53,11 +54,10 @@ Public Class Game
         mWindow = New Bitmap(mWindowW, mWindowH)      'PictureBoxと同じ大きさの画像を作る
         mRenderer = Graphics.FromImage(mWindow)           '画像のGraphicsクラスを生成
 
-
         LoadData()
 
         mTicksCount.Start()
-        Timer1.Interval = 33.33       'FPS = 1000/interval
+        Timer1.Interval = 16.67       'FPS = 1000/interval
         Timer1.Enabled = True
         mTicksCountPre = mTicksCount.ElapsedMilliseconds
 

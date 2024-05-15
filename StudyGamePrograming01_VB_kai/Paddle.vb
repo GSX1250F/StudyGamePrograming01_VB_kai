@@ -8,40 +8,50 @@ Public Class Paddle
         mScale = 1.0
 
         'スプライトコンポーネント作成、テクスチャ設定
-        Dim sc As New SpriteComponent(Me, 30)
-        sc.SetTexture(game.GetTexture("\Assets\paddle.png"))
-
-        'InputComponent作成
-        mInput = New InputComponent(Me, 10)
-        mInput.mForwardKey = Keys.Up
-        mInput.mBackwardKey = Keys.Down
-        mInput.mMaxForwardForce = 300.0
-        mInput.mMoveResist = 30.0
-
-        mRotation = Math.PI * 0.5
+        mSprite = New SpriteComponent(Me, 30)
+        mSprite.SetTexture(game.GetTexture("\Assets\paddle.png"))
 
         Init()
     End Sub
 
     Public Overrides Sub UpdateActor(deltaTime As Single)
-
-
+        mPosition.Y += mPaddleDir * mPaddleSpeed * deltaTime
+        If mPosition.Y - mSprite.mTexHeight / 2 < 0 Then
+            mPosition.Y = mSprite.mTexHeight / 2
+        ElseIf mPosition.Y + mSprite.mTexHeight / 2 > mGame.mWindowH Then
+            mPosition.Y = mGame.mWindowH - mSprite.mTexHeight / 2
+        End If
     End Sub
 
     Public Overrides Sub ActorInput(keyState As KeyEventArgs)
         MyBase.ActorInput(keyState)
-
+        mPaddleDir = 0
+        If Not keyState Is Nothing Then
+            If keyState.KeyCode = Keys.Up Then
+                mPaddleDir = -1
+            ElseIf keyState.KeyCode = Keys.Down Then
+                mPaddleDir = 1
+            ElseIf keyState.KeyCode = Keys.R Then
+                '再スタート
+                Init()
+                For i = 0 To mGame.numBalls - 1
+                    mGame.mBalls(i).Init()
+                Next
+            End If
+        End If
 
     End Sub
 
     Public Sub Init()
+        mState = State.EActive
         mPosition.X = 50
         mPosition.Y = mGame.mWindowH / 2
 
-        mInput.mVelocity.X = 0.0
-        mInput.mVelocity.Y = 0.0
+        mPaddleSpeed = 400
+        mPaddleDir = 0
     End Sub
 
-    Public mInput As InputComponent
-
+    Public mSprite As SpriteComponent
+    Public mPaddleSpeed As Single
+    Public mPaddleDir As Integer
 End Class
